@@ -17,14 +17,20 @@
     <script type="text/javascript"
         src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4f87397342a5a6257622aad28f62bca9"></script>
 
-  <header>
-    <h1>거기 어디?</h1>
-  </header>
+  
 
   <section>
     <article>
-      <input id="keywordName" value="" type="text"><button id="search">검색</button><br><br>
-      <p></p>
+        <div class="logo">
+            <h1>거기어디?</h1>
+        </div>
+        <div>
+            <input id="keywordName" value="" type="text"><button id="search">검색</button><br><br>
+        </div>
+      <div id="info">
+        <p></p>
+      </div>
+     
     </article>
 
     <article>
@@ -32,9 +38,7 @@
     </article>
   </section>
 
-  <footer>
-    <h1>Sample flexbox example</h1>
-  </footer>
+ 
 
 
 <script>
@@ -49,7 +53,7 @@
           var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
               mapOption = {
                   center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
-                  level: 4 // 지도의 확대 레벨
+                  level: 3 // 지도의 확대 레벨
               };
 
           var map = new kakao.maps.Map(mapContainer, mapOption);
@@ -86,7 +90,7 @@
   $(document).ready(function () {
       $("#search").click(function () {
           $("p").empty();
-          $("div").empty();
+          $("#map").empty();
           $.ajax({
               method: "GET",
               url: "https://dapi.kakao.com/v2/local/search/keyword.json?y=" + x + "&x=" + y + "&radius=20000",
