@@ -1,0 +1,51 @@
+
+    html {
+      font-family: sans-serif;
+    }
+
+    body {
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    header {
+      background: purple;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer {
+      background: purple;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+      line-height: 100px;
+      margin: 0;
+    }
+
+    article {
+      padding: 10px;
+      margin: 10px;
+      background: rgb(148, 228, 197);
+      flex: 1 200px;
+    }
+
+    section {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    article:nth-of-type(2) {
+      flex: 3 400px;
+    }
