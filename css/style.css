@@ -5,13 +5,11 @@
 
     body {
       margin: 0;
-      display: flex;
-      min-height: 100vh;
-      flex-direction: column;
+   
     }
 
     header {
-      background: purple;
+      background: #258fff;
       height: 80px;
       display: flex;
       align-items: center;
@@ -27,25 +25,31 @@
     }
 
     h1 {
-      text-align: center;
       color: white;
-      line-height: 100px;
-      margin: 0;
-    }
-
-    article {
-      padding: 10px;
       margin: 10px;
-      background: rgb(148, 228, 197);
-      flex: 1 200px;
     }
 
     section {
-      display: flex;
-      flex-wrap: wrap;
-      flex: 1;
+        display: flex;
+        flex: 1;
+        flex-wrap: wrap;
+        flex-direction: row ;
+      }
+
+    article {
+      align-self: flex-start;
+      margin: 10px;
+      background: white;
+      flex: 1 200px;
+     
     }
 
+    
+
     article:nth-of-type(2) {
+      align-self: flex-start;
       flex: 3 400px;
+      
     }
+
+   
