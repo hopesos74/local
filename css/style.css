@@ -8,48 +8,48 @@
    
     }
 
-    header {
-      background: #258fff;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    footer {
-      background: purple;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    h1 {
-      color: white;
-      margin: 10px;
-    }
-
-    section {
+    .flexbox-wrapper {
         display: flex;
-        flex: 1;
+        height: 100vh;
+        overflow: auto;
         flex-wrap: wrap;
-        flex-direction: row ;
       }
 
-    article {
-      align-self: flex-start;
-      margin: 10px;
-      background: white;
-      flex: 1 200px;
-     
-    }
+      .regular {
+        flex: 1 200px;
+        height: 100vh;
+        padding: 10px;
+      }
 
-    
+      .sticky {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        flex: 3 400px;
+        height: 350px;
+        align-self: flex-start;
+        padding: 10px;
+      }
 
-    article:nth-of-type(2) {
-      align-self: flex-start;
-      flex: 3 400px;
-      
-    }
 
+      .search_flexbox-wrapper {
+        display: flex;
+        height: 100vh;
+        top: 0;
+        flex-wrap: wrap;
+        overflow: auto;
+      }
+
+      .search_sticky{
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        height: 30px;
+        align-self: flex-start;
+      }
    
+      .search_regular {
+        flex: 1 200px;
+        height: 100vh;
+        padding: 10px;
+      }

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1, initial-scale=1.0">
     <title>거기어디?</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 
 
@@ -18,34 +19,27 @@
     <script type="text/javascript"
         src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4f87397342a5a6257622aad28f62bca9"></script>
 
-        <header>
-            <h1>거기 어디?</h1>
-          </header>
 
-    <section>
-        <article>
+    <div class="flexbox-wrapper">
+        <div id="map" class="sticky">
 
-            <div id="map" style="width:100%;height:400px;"></div>
-                     
-           
-        </article>
+        </div>
 
-        <article>
+        <div class="regular">
+            <dvi class="search_flexbox-wrapper">
+                <div class="mx-auto mt-1 input-group mb-3 search_sticky">
+                    <input id="keywordName" type="text" class="form-control" placeholder="찾고 싶은 곳.."
+                        aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                </div>
 
-            <div class="mx-auto mt-1 input-group mb-3">
-                <input id="keywordName" type="text" class="form-control" placeholder="찾고 싶은 곳.." aria-label="Recipient's username" aria-describedby="button-addon2">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
-              </div>
-            
-               
-           <div id="result">
-            
-           </div>
-           
+                <div id="result" class="search_regular">
+                </div>
+        </div>
+    </div>
 
 
-        </article>
-    </section>
+
 
 
     <script>
@@ -76,7 +70,7 @@
                 // 마커가 지도 위에 표시되도록 설정합니다
                 marker.setMap(map);
 
-                var iwContent = '<div>'+cuur+' </div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+                var iwContent = '<div>' + cuur + ' </div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
                     iwPosition = new kakao.maps.LatLng(x, y); //인포윈도우 표시 위치입니다
 
                 // 인포윈도우를 생성합니다
@@ -109,7 +103,7 @@
                     .done(function (msg) {
                         console.log(msg);
                         cuur = msg.documents[0].address_name;
-                        for (i = 0; i < 5; i++) {
+                        for (i = 0; i < 15; i++) {
                             $("#result").append("이름 : " + msg.documents[i].place_name + "<br>");
 
 
@@ -244,7 +238,7 @@
                 }
             });
 
-           
+
         });
     </script>
 
