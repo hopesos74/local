@@ -1,0 +1,45 @@
+
+    html {
+      font-family: sans-serif;
+    }
+
+    body {
+      margin: 0;
+   
+    }
+    header {
+        padding: 10px;
+        height: 70px;
+       
+      }
+
+    .flexbox-wrapper {
+        display: flex;
+        height: 100vh;
+        overflow: auto;
+        flex-wrap: wrap;
+        padding-left: 10px;
+        padding-right: 10px;
+       
+      }
+
+      .regular {
+        flex: 1 300px;
+        height: 90vh;
+       
+      }
+
+      .sticky {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        flex: 3 400px;
+        height: 300px;
+        align-self: flex-start;
+        
+      }
+
+      .result_style {
+        padding: .5rem 1.25rem;
+        height: 25%;
+    }

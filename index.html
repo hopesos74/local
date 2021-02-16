@@ -53,7 +53,7 @@
                     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
                         mapOption = {
                             center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
-                            level: 4 // 지도의 확대 레벨
+                            level: 5 // 지도의 확대 레벨
                         };
 
                     var map = new kakao.maps.Map(mapContainer, mapOption);
@@ -93,11 +93,23 @@
                             
 
                             var imageSrc = new Array();
-                            imageSrc[0] = "https://maps.google.com/mapfiles/markerA.png";
-                            imageSrc[1] = "https://maps.google.com/mapfiles/markerB.png";
-                            imageSrc[2] = "https://maps.google.com/mapfiles/markerC.png";
-                            imageSrc[3] = "https://maps.google.com/mapfiles/markerD.png";
-                            imageSrc[4] = "https://maps.google.com/mapfiles/markerE.png";
+                            imageSrc[0] = "http://maps.google.com/mapfiles/markerA.png";
+                            imageSrc[1] = "http://maps.google.com/mapfiles/markerB.png";
+                            imageSrc[2] = "http://maps.google.com/mapfiles/markerC.png";
+                            imageSrc[3] = "http://maps.google.com/mapfiles/markerD.png";
+                            imageSrc[4] = "http://maps.google.com/mapfiles/markerE.png";
+                            imageSrc[5] = "http://maps.google.com/mapfiles/markerF.png";
+                            imageSrc[6] = "http://maps.google.com/mapfiles/markerG.png";
+                            imageSrc[7] = "http://maps.google.com/mapfiles/markerH.png";
+                            imageSrc[8] = "http://maps.google.com/mapfiles/markerI.png";
+                            imageSrc[9] = "http://maps.google.com/mapfiles/markerJ.png";
+                            imageSrc[10] = "http://maps.google.com/mapfiles/markerK.png";
+                            imageSrc[11] = "http://maps.google.com/mapfiles/markerL.png";
+                            imageSrc[12] = "http://maps.google.com/mapfiles/markerM.png";
+                            imageSrc[13] = "http://maps.google.com/mapfiles/markerN.png";
+                            imageSrc[14] = "http://maps.google.com/mapfiles/markerO.png";
+                            
+
 
 
                             for (i = 0; i < 15; i++) {
@@ -126,12 +138,16 @@
 
                             mapOption = {
                                 center: new kakao.maps.LatLng(keyword_x, keyword_y), // 지도의 중심좌표
-                                level: 5 // 지도의 확대 레벨
+                                level: 7 // 지도의 확대 레벨
                             };
 
                             var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
                             // 마커를 표시할 위치와 title 객체 배열입니다 
+
+                            
+                            
+
                             var positions = [
                                 {
                                     title: msg.documents[0].place_name,
@@ -148,7 +164,52 @@
                                 {
                                     title: msg.documents[3].place_name,
                                     latlng: new kakao.maps.LatLng(msg.documents[3].y, msg.documents[3].x)
+                                },
+                                {
+                                    title: msg.documents[4].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[0].y, msg.documents[4].x)
+                                },
+                                {
+                                    title: msg.documents[5].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[1].y, msg.documents[5].x)
+                                },
+                                {
+                                    title: msg.documents[6].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[2].y, msg.documents[6].x)
+                                },
+                                {
+                                    title: msg.documents[7].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[3].y, msg.documents[7].x)
+                                },
+                                {
+                                    title: msg.documents[8].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[0].y, msg.documents[8].x)
+                                },
+                                {
+                                    title: msg.documents[9].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[1].y, msg.documents[9].x)
+                                },
+                                {
+                                    title: msg.documents[10].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[2].y, msg.documents[10].x)
+                                },
+                                {
+                                    title: msg.documents[11].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[3].y, msg.documents[11].x)
+                                },
+                                {
+                                    title: msg.documents[12].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[0].y, msg.documents[12].x)
+                                },
+                                {
+                                    title: msg.documents[13].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[1].y, msg.documents[13].x)
+                                },
+                                {
+                                    title: msg.documents[14].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[2].y, msg.documents[14].x)
                                 }
+                              
                             ];
 
                             // 마커 이미지의 이미지 주소입니다
