@@ -8,7 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/style.css" />
-
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 
 </head>
 
@@ -27,15 +28,12 @@
             <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
     </header>
 
-
-
-
     <div class="flexbox-wrapper">
         <div id="map" class="sticky">
-
         </div>
-
         <div class="regular">
+            <div id="current_weather" class="current_weather_style"></div>
+
             <div id="result" class="result_style">
             </div>
 
@@ -69,10 +67,32 @@
                     // 마커가 지도 위에 표시되도록 설정합니다
                     marker.setMap(map);
 
+
+                    $.ajax({
+                        method: "GET",
+                        url: "https://api.weatherbit.io/v2.0/current?lat=" + x + "&lon=" + y + "&key=db8e267cc81943dea25715a4794e3eb5&units=M"
+
+                    })
+                        .done(function (curent_weather) {
+                            console.log(curent_weather);
+                            $("#current_weather").append("<img src='https://www.weatherbit.io/static/img/icons/"+curent_weather.data[0].weather.icon+".png'>");
+                            $("#current_weather").append(curent_weather.data[0].temp+"℃ &nbsp;");
+                            $("#current_weather").append(curent_weather.data[0].rh+"% &nbsp;");
+                            $("#current_weather").append(curent_weather.data[0].weather.description);
+                            
+                            
+                           
+                        });
+
+
                 });
             } else {
                 alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.")
             }
+
+
+
+
 
 
             $(document).ready(function () {
@@ -90,7 +110,7 @@
                         .done(function (msg) {
 
                             console.log(msg);
-                            
+
 
                             var imageSrc = new Array();
                             imageSrc[0] = "https://maps.google.com/mapfiles/markerA.png";
@@ -108,12 +128,12 @@
                             imageSrc[12] = "https://maps.google.com/mapfiles/markerM.png";
                             imageSrc[13] = "https://maps.google.com/mapfiles/markerN.png";
                             imageSrc[14] = "https://maps.google.com/mapfiles/markerO.png";
-                            
+
 
 
 
                             for (i = 0; i < 15; i++) {
-                                $("#result").append("<img src='"+imageSrc[i]+"'>&nbsp;" + msg.documents[i].place_name + "<br>");
+                                $("#result").append("<img src='" + imageSrc[i] + "'>&nbsp;" + msg.documents[i].place_name + "<br>");
 
 
                                 if (msg.documents[i].road_address_name) {
@@ -136,17 +156,17 @@
                             var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
 
 
-                            mapOption = {
-                                center: new kakao.maps.LatLng(keyword_x, keyword_y), // 지도의 중심좌표
-                                level: 7 // 지도의 확대 레벨
-                            };
+                                mapOption = {
+                                    center: new kakao.maps.LatLng(keyword_x, keyword_y), // 지도의 중심좌표
+                                    level: 7 // 지도의 확대 레벨
+                                };
 
                             var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
                             // 마커를 표시할 위치와 title 객체 배열입니다 
 
-                            
-                            
+
+
 
                             var positions = [
                                 {
@@ -209,11 +229,11 @@
                                     title: msg.documents[14].place_name,
                                     latlng: new kakao.maps.LatLng(msg.documents[14].y, msg.documents[14].x)
                                 }
-                              
+
                             ];
 
                             // 마커 이미지의 이미지 주소입니다
-                           
+
 
                             for (var i = 0; i < positions.length; i++) {
 
