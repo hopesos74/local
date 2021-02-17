@@ -1,41 +1,47 @@
 
-    html {
-      font-family: sans-serif;
-    }
-
-    body {
-      margin: 0;
-   
-    }
-    header {
-        padding: 5px;
-        height: 60px;
+     html {
+        font-family: sans-serif;
       }
-
-    .flexbox-wrapper {
-        display: flex;
-        height: 100vh;
-        overflow: auto;
-        flex-wrap: wrap;
-        padding-left: 10px;
-        padding-right: 10px;  
+  
+      body {
+        margin: 0;
+     
       }
+      header {
+          padding: 5px;
+          height: 60px;
+        }
+  
+      .flexbox-wrapper {
+          display: flex;
+         
+          overflow: auto;
+          flex-wrap: wrap;
+          padding-left: 10px;
+          padding-right: 10px;  
+        }
+  
+        .regular {
+          flex: 1 300px;
+        }
+  
+        .sticky {
+          position: -webkit-sticky;
+          position: sticky;
+          top: 0;
+          flex: 3 400px;
+          height: 250px;
+          align-self: flex-start;
+          
+        }
+  
+        .current_weather{
+          display: flex;
+          align-items: center;
+        }
 
-      .regular {
-        flex: 1 300px;
+        .result_style {
+          padding: .5rem 1.25rem;
+          height: 25%;
       }
-
-      .sticky {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
-        flex: 3 400px;
-        height: 250px;
-        align-self: flex-start;
-        
-      }
-
-      .result_style {
-        padding: .5rem 1.25rem;
-        height: 25%;
-    }
+  
