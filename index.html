@@ -21,7 +21,6 @@
         src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4f87397342a5a6257622aad28f62bca9"></script>
 
     <header>
-
         <div class="mx-auto mt-1 input-group mb-3">
             <input id="keywordName" type="text" class="form-control" placeholder="찾고 싶은 곳.."
                 aria-label="Recipient's username" aria-describedby="button-addon2">
@@ -32,10 +31,13 @@
         <div id="map" class="sticky">
         </div>
         <div class="regular">
-            <div id="current_weather" class="current_weather_style"></div>
 
-            <div id="result" class="result_style">
+            <div class="current_weather">
+                <div id="icon"></div>
+                <div id="description"></div>
             </div>
+            <div id="result" class="result_style"></div>
+
 
         </div>
 
@@ -75,13 +77,33 @@
                     })
                         .done(function (curent_weather) {
                             console.log(curent_weather);
-                            $("#current_weather").append("<img src='https://www.weatherbit.io/static/img/icons/"+curent_weather.data[0].weather.icon+".png'>");
-                            $("#current_weather").append(curent_weather.data[0].temp+"℃ &nbsp;");
-                            $("#current_weather").append(curent_weather.data[0].rh+"% &nbsp;");
-                            $("#current_weather").append(curent_weather.data[0].weather.description);
-                            
-                            
-                           
+                            $("#icon").append("<img src='https://www.weatherbit.io/static/img/icons/" + curent_weather.data[0].weather.icon + ".png'>");
+                            $("#description").append(curent_weather.data[0].temp + "℃ &nbsp;");
+                            $("#description").append(curent_weather.data[0].rh + "% &nbsp;");
+                            $("#description").append(curent_weather.data[0].weather.description + "&nbsp;<br>");
+
+                            curr_time = curent_weather.data[0].ob_time;
+
+                            var tDate = new Date(curr_time);
+
+                            // 시간 더하기
+                            tDate.setHours(tDate.getHours() + 9);
+
+                            function DateToString(pDate) {
+                                var yyyy = pDate.getFullYear();
+                                var mm = pDate.getMonth() < 9 ? "0" + (pDate.getMonth() + 1) : (pDate.getMonth() + 1); // getMonth() is zero-based
+                                var dd = pDate.getDate() < 10 ? "0" + pDate.getDate() : pDate.getDate();
+                                var hh = pDate.getHours() < 10 ? "0" + pDate.getHours() : pDate.getHours();
+                                var min = pDate.getMinutes() < 10 ? "0" + pDate.getMinutes() : pDate.getMinutes();
+                                return "".concat(yyyy).concat("-").concat(mm).concat("-").concat(dd).concat(" ").concat(hh).concat(":").concat(min);
+                            };
+
+                            tDate = DateToString(tDate);
+                            $("#description").append(tDate+"<br>");
+                            $("#description").append(curent_weather.data[0].city_name+"&nbsp;"+curent_weather.data[0].country_code);
+
+
+
                         });
 
 
