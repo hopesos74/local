@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/db86b98b0a.js" crossorigin="anonymous"></script>
 
 </head>
 
@@ -36,7 +37,18 @@
                 <div id="icon"></div>
                 <div id="description"></div>
             </div>
+
+            <div id="air_pm" class="result_style"></div>
+            <div id="adfit" class="result_style">
+
+                <ins class="kakao_ad_area" style="display:none;" 
+ data-ad-unit    = "DAN-B7hTQGCw3pfTowmR" 
+ data-ad-width   = "320" 
+ data-ad-height  = "50"></ins> 
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+            </div>
             <div id="result" class="result_style"></div>
+            
 
 
         </div>
@@ -99,13 +111,61 @@
                             };
 
                             tDate = DateToString(tDate);
-                            $("#description").append(tDate+"<br>");
-                            $("#description").append(curent_weather.data[0].city_name+"&nbsp;"+curent_weather.data[0].country_code);
-
-
+                            $("#description").append("측정시각 : " + tDate + "<br>");
+                            $("#description").append(curent_weather.data[0].city_name + "&nbsp;" + curent_weather.data[0].country_code);
 
                         });
 
+                    $.ajax({
+                        method: "GET",
+                        url: "https://api.waqi.info/feed/geo:" + x + ";" + y + "/?token=a3217fdd5b58dd94f22869ee9d3c13c59c4c6ac2"
+
+                    })
+                        .done(function (pm) {
+                            console.log(pm);
+
+                            if (pm.data.iaqi.pm25.v <= 50) {
+                                var level = "좋음";
+                                var color = "#0080FF";
+                                var icon = "<i class='far fa-smile'></i>"
+                            } else if (pm.data.iaqi.pm25.v <= 100) {
+                                var level = "보통";
+                                var color = "#3ADF00";
+                                var icon = "<i class='far fa-meh'></i>"
+                            } else if (pm.data.iaqi.pm25.v <= 250) {
+                                var level = "나쁨";
+                                var color = "#FF8000";
+                                var icon = "<i class='far fa-angry'></i>"
+                            } else if (pm.data.iaqi.pm25.v <= 500) {
+                                var level = "매우나쁨";
+                                var color = "#FE2E2E";
+                                var icon = "<i class='far fa-tired'></i>"
+                            };
+
+                            if (pm.data.iaqi.pm10.v <= 30) {
+                                var pm10_level = "좋음";
+                                var pm10_color = "#0080FF";
+                                var pm10_icon = "<i class='far fa-smile'></i>"
+                            } else if (pm.data.iaqi.pm10.v <= 80) {
+                                var pm10_level = "보통";
+                                var pm10_color = "#3ADF00";
+                                var pm10_icon = "<i class='far fa-meh'></i>"
+                            } else if (pm.data.iaqi.pm10.v <= 150) {
+                                var pm10_level = "나쁨";
+                                var pm10_color = "#FF8000";
+                                var pm10_icon = "<i class='far fa-angry'></i>"
+                            } else if (pm.data.iaqi.pm10.v <= 1000) {
+                                var pm10_level = "매우나쁨";
+                                var pm10_color = "#FE2E2E";
+                                var pm10_icon = "<i class='far fa-tired'></i>"
+                            };
+
+                            $("#air_pm").append("통합대기(AQI) : <SPAN STYLE='background-color:" + color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm25.v + "(" + level + ")&nbsp;" + icon + "&nbsp;</i></font></span><br>");
+                            $("#air_pm").append("미세먼지(PM10) : <SPAN STYLE='background-color:" + pm10_color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm10.v + "(" + pm10_level + ")&nbsp;" + pm10_icon + "&nbsp;</i></font></span><br>");
+                            $("#air_pm").append("측정시각 : " + pm.data.time.s + "<br>");
+                            $("#air_pm").append("측정위치 : " + pm.data.city.name);
+
+                        });
 
                 });
             } else {
@@ -114,12 +174,12 @@
 
 
 
-
-
-
             $(document).ready(function () {
                 $("#button-addon2").click(function () {
                     $("#result").empty();
+                    $("#icon").empty();
+                    $("#description").empty();
+                    $("#air_pm").empty();
                     $("#map").empty();
                     $.ajax({
                         method: "GET",
@@ -273,7 +333,100 @@
                                     image: markerImage // 마커 이미지 
                                 });
                             }
+
+                            $.ajax({
+                                method: "GET",
+                                url: "https://api.weatherbit.io/v2.0/current?lat=" + keyword_x + "&lon=" + keyword_y + "&key=db8e267cc81943dea25715a4794e3eb5&units=M"
+
+                            })
+                                .done(function (curent_weather) {
+                                    console.log(curent_weather);
+                                    $("#icon").append("<img src='https://www.weatherbit.io/static/img/icons/" + curent_weather.data[0].weather.icon + ".png'>");
+                                    $("#description").append(curent_weather.data[0].temp + "℃ &nbsp;");
+                                    $("#description").append(curent_weather.data[0].rh + "% &nbsp;");
+                                    $("#description").append(curent_weather.data[0].weather.description + "&nbsp;<br>");
+
+                                    curr_time = curent_weather.data[0].ob_time;
+
+                                    var tDate = new Date(curr_time);
+
+                                    // 시간 더하기
+                                    tDate.setHours(tDate.getHours() + 9);
+
+                                    function DateToString(pDate) {
+                                        var yyyy = pDate.getFullYear();
+                                        var mm = pDate.getMonth() < 9 ? "0" + (pDate.getMonth() + 1) : (pDate.getMonth() + 1); // getMonth() is zero-based
+                                        var dd = pDate.getDate() < 10 ? "0" + pDate.getDate() : pDate.getDate();
+                                        var hh = pDate.getHours() < 10 ? "0" + pDate.getHours() : pDate.getHours();
+                                        var min = pDate.getMinutes() < 10 ? "0" + pDate.getMinutes() : pDate.getMinutes();
+                                        return "".concat(yyyy).concat("-").concat(mm).concat("-").concat(dd).concat(" ").concat(hh).concat(":").concat(min);
+                                    };
+
+                                    tDate = DateToString(tDate);
+                                    $("#description").append("측정시각 : " + tDate + "<br>");
+                                    $("#description").append(curent_weather.data[0].city_name + "&nbsp;" + curent_weather.data[0].country_code);
+
+                                });
+
+                            $.ajax({
+                                method: "GET",
+                                url: "https://api.waqi.info/feed/geo:" + keyword_x + ";" + keyword_y + "/?token=a3217fdd5b58dd94f22869ee9d3c13c59c4c6ac2"
+
+                            })
+                                .done(function (pm) {
+                                    console.log(pm);
+
+                                    if (pm.data.iaqi.pm25.v <= 50) {
+                                        var level = "좋음";
+                                        var color = "#0080FF";
+                                        var icon = "<i class='far fa-smile'></i>"
+                                    } else if (pm.data.iaqi.pm25.v <= 100) {
+                                        var level = "보통";
+                                        var color = "#3ADF00";
+                                        var icon = "<i class='far fa-meh'></i>"
+                                    } else if (pm.data.iaqi.pm25.v <= 250) {
+                                        var level = "나쁨";
+                                        var color = "#FF8000";
+                                        var icon = "<i class='far fa-angry'></i>"
+                                    } else if (pm.data.iaqi.pm25.v <= 500) {
+                                        var level = "매우나쁨";
+                                        var color = "#FE2E2E";
+                                        var icon = "<i class='far fa-tired'></i>"
+                                    };
+
+                                    if (pm.data.iaqi.pm10.v <= 30) {
+                                        var pm10_level = "좋음";
+                                        var pm10_color = "#0080FF";
+                                        var pm10_icon = "<i class='far fa-smile'></i>"
+                                    } else if (pm.data.iaqi.pm10.v <= 80) {
+                                        var pm10_level = "보통";
+                                        var pm10_color = "#3ADF00";
+                                        var pm10_icon = "<i class='far fa-meh'></i>"
+                                    } else if (pm.data.iaqi.pm10.v <= 150) {
+                                        var pm10_level = "나쁨";
+                                        var pm10_color = "#FF8000";
+                                        var pm10_icon = "<i class='far fa-angry'></i>"
+                                    } else if (pm.data.iaqi.pm10.v <= 1000) {
+                                        var pm10_level = "매우나쁨";
+                                        var pm10_color = "#FE2E2E";
+                                        var pm10_icon = "<i class='far fa-tired'></i>"
+                                    };
+
+                                    $("#air_pm").append("통합대기(AQI) : <SPAN STYLE='background-color:" + color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm25.v + "(" + level + ")&nbsp;" + icon + "&nbsp;</i></font></span><br>");
+                                    $("#air_pm").append("미세먼지(PM10) : <SPAN STYLE='background-color:" + pm10_color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm10.v + "(" + pm10_level + ")&nbsp;" + pm10_icon + "&nbsp;</i></font></span><br>");
+                                    $("#air_pm").append("측정시각 : " + pm.data.time.s + "<br>");
+                                    $("#air_pm").append("측정위치 : " + pm.data.city.name);
+
+                                });
+
+
+
                         });
+
+
+
+
+
                 });
                 $('#keywordName').keypress(function (event) {
                     if (event.which == 13) {
