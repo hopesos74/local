@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1, initial-scale=1.0">
+    <title>거기어디?</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/db86b98b0a.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript"
+        src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4f87397342a5a6257622aad28f62bca9"></script>
+
+    <header>
+        <div class="mx-auto mt-1 input-group mb-3">
+            <input id="keywordName" type="text" class="form-control" placeholder="찾고 싶은 곳.."
+                aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+    </header>
+
+    <div class="flexbox-wrapper">
+        <div id="map" class="sticky">
+        </div>
+        <div class="regular">
+
+            <div class="current_weather">
+                <div id="icon"></div>
+                <div id="description"></div>
+            </div>
+
+            <div id="air_pm" class="result_style"></div>
+            
+           
+            <div id="result" class="result_style"></div>
+
+            <div class="result_style">
+                <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-AIxnNjhz0UopOAAq" data-ad-width="320"
+                    data-ad-height="50"></ins>
+                <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+            </div>
+
+
+
+        </div>
+
+        <script>
+            // Geolocation API에 액세스할 수 있는지를 확인
+            if (navigator.geolocation) {
+                //위치 정보를 얻기
+                navigator.geolocation.getCurrentPosition(function (pos) {
+                    x = pos.coords.latitude;
+                    y = pos.coords.longitude;
+
+
+                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                        mapOption = {
+                            center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
+                            level: 5 // 지도의 확대 레벨
+                        };
+
+                    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+                    // 마커가 표시될 위치입니다 
+                    var markerPosition = new kakao.maps.LatLng(x, y);
+
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition
+                    });
+
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    marker.setMap(map);
+
+
+                    $.ajax({
+                        method: "GET",
+                        url: "https://api.weatherbit.io/v2.0/current?lat=" + x + "&lon=" + y + "&key=db8e267cc81943dea25715a4794e3eb5&units=M"
+
+                    })
+                        .done(function (curent_weather) {
+                            console.log(curent_weather);
+                            $("#icon").append("<img src='https://www.weatherbit.io/static/img/icons/" + curent_weather.data[0].weather.icon + ".png'>");
+                            $("#description").append(curent_weather.data[0].temp + "℃ &nbsp;");
+                            $("#description").append(curent_weather.data[0].rh + "% &nbsp;");
+                            $("#description").append(curent_weather.data[0].weather.description + "&nbsp;<br>");
+
+                            curr_time = curent_weather.data[0].ob_time;
+
+                            var tDate = new Date(curr_time);
+
+                            // 시간 더하기
+                            tDate.setHours(tDate.getHours() + 9);
+
+                            function DateToString(pDate) {
+                                var yyyy = pDate.getFullYear();
+                                var mm = pDate.getMonth() < 9 ? "0" + (pDate.getMonth() + 1) : (pDate.getMonth() + 1); // getMonth() is zero-based
+                                var dd = pDate.getDate() < 10 ? "0" + pDate.getDate() : pDate.getDate();
+                                var hh = pDate.getHours() < 10 ? "0" + pDate.getHours() : pDate.getHours();
+                                var min = pDate.getMinutes() < 10 ? "0" + pDate.getMinutes() : pDate.getMinutes();
+                                return "".concat(yyyy).concat("-").concat(mm).concat("-").concat(dd).concat(" ").concat(hh).concat(":").concat(min);
+                            };
+
+                            tDate = DateToString(tDate);
+                            $("#description").append("측정시각 : " + tDate + "<br>");
+                            $("#description").append(curent_weather.data[0].city_name + "&nbsp;" + curent_weather.data[0].country_code);
+
+                        });
+
+                    $.ajax({
+                        method: "GET",
+                        url: "https://api.waqi.info/feed/geo:" + x + ";" + y + "/?token=a3217fdd5b58dd94f22869ee9d3c13c59c4c6ac2"
+
+                    })
+                        .done(function (pm) {
+                            console.log(pm);
+
+                            if (pm.data.iaqi.pm25.v <= 50) {
+                                var level = "좋음";
+                                var color = "#0080FF";
+                                var icon = "<i class='far fa-smile'></i>"
+                            } else if (pm.data.iaqi.pm25.v <= 100) {
+                                var level = "보통";
+                                var color = "#3ADF00";
+                                var icon = "<i class='far fa-meh'></i>"
+                            } else if (pm.data.iaqi.pm25.v <= 250) {
+                                var level = "나쁨";
+                                var color = "#FF8000";
+                                var icon = "<i class='far fa-angry'></i>"
+                            } else if (pm.data.iaqi.pm25.v <= 500) {
+                                var level = "매우나쁨";
+                                var color = "#FE2E2E";
+                                var icon = "<i class='far fa-tired'></i>"
+                            };
+
+                            if (pm.data.iaqi.pm10.v <= 30) {
+                                var pm10_level = "좋음";
+                                var pm10_color = "#0080FF";
+                                var pm10_icon = "<i class='far fa-smile'></i>"
+                            } else if (pm.data.iaqi.pm10.v <= 80) {
+                                var pm10_level = "보통";
+                                var pm10_color = "#3ADF00";
+                                var pm10_icon = "<i class='far fa-meh'></i>"
+                            } else if (pm.data.iaqi.pm10.v <= 150) {
+                                var pm10_level = "나쁨";
+                                var pm10_color = "#FF8000";
+                                var pm10_icon = "<i class='far fa-angry'></i>"
+                            } else if (pm.data.iaqi.pm10.v <= 1000) {
+                                var pm10_level = "매우나쁨";
+                                var pm10_color = "#FE2E2E";
+                                var pm10_icon = "<i class='far fa-tired'></i>"
+                            };
+
+                            $("#air_pm").append("통합대기(AQI) : <SPAN STYLE='background-color:" + color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm25.v + "(" + level + ")&nbsp;" + icon + "&nbsp;</i></font></span><br>");
+                            $("#air_pm").append("미세먼지(PM10) : <SPAN STYLE='background-color:" + pm10_color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm10.v + "(" + pm10_level + ")&nbsp;" + pm10_icon + "&nbsp;</i></font></span><br>");
+                            $("#air_pm").append("측정시각 : " + pm.data.time.s + "<br>");
+                            $("#air_pm").append("측정위치 : " + pm.data.city.name);
+
+                        });
+
+                });
+            } else {
+                alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.")
+            }
+
+
+
+            $(document).ready(function () {
+                $("#button-addon2").click(function () {
+                    $("#result").empty();
+                    $("#icon").empty();
+                    $("#description").empty();
+                    $("#air_pm").empty();
+                    $("#map").empty();
+                    $.ajax({
+                        method: "GET",
+                        url: "https://dapi.kakao.com/v2/local/search/keyword.json?y=" + x + "&x=" + y,
+                        data: { query: $("#keywordName").val() },
+                        headers: { Authorization: "KakaoAK eaba352137de06ddce13c272d9ce9756" }
+                    })
+
+
+                        .done(function (msg) {
+
+                            console.log(msg);
+
+
+                            var imageSrc = new Array();
+                            imageSrc[0] = "https://maps.google.com/mapfiles/markerA.png";
+                            imageSrc[1] = "https://maps.google.com/mapfiles/markerB.png";
+                            imageSrc[2] = "https://maps.google.com/mapfiles/markerC.png";
+                            imageSrc[3] = "https://maps.google.com/mapfiles/markerD.png";
+                            imageSrc[4] = "https://maps.google.com/mapfiles/markerE.png";
+                            imageSrc[5] = "https://maps.google.com/mapfiles/markerF.png";
+                            imageSrc[6] = "https://maps.google.com/mapfiles/markerG.png";
+                            imageSrc[7] = "https://maps.google.com/mapfiles/markerH.png";
+                            imageSrc[8] = "https://maps.google.com/mapfiles/markerI.png";
+                            imageSrc[9] = "https://maps.google.com/mapfiles/markerJ.png";
+                            imageSrc[10] = "https://maps.google.com/mapfiles/markerK.png";
+                            imageSrc[11] = "https://maps.google.com/mapfiles/markerL.png";
+                            imageSrc[12] = "https://maps.google.com/mapfiles/markerM.png";
+                            imageSrc[13] = "https://maps.google.com/mapfiles/markerN.png";
+                            imageSrc[14] = "https://maps.google.com/mapfiles/markerO.png";
+
+
+
+
+                            for (i = 0; i < 15; i++) {
+                                $("#result").append("<img src='" + imageSrc[i] + "'>&nbsp;" + msg.documents[i].place_name + "<br>");
+
+
+                                if (msg.documents[i].road_address_name) {
+                                    $("#result").append("주소 : " + msg.documents[i].road_address_name + "<br>");
+                                } else {
+                                    $("#result").append("주소 : " + msg.documents[i].address_name + "<br>");
+                                }
+                                if (msg.documents[i].phone) {
+                                    $("#result").append("전화 : <a href='tel:" + msg.documents[i].phone + "'>" + msg.documents[i].phone + "</a><br>");
+                                }
+
+                                $("#result").append("지도 : <a href='" + msg.documents[i].place_url + "' target='_blank'>카카오맵</a><br>");
+                                $("#result").append("거리 : " + msg.documents[i].distance + "&nbsp;m<br><br>");
+
+                            }
+
+                            var keyword_x = msg.documents[0].y;
+                            var keyword_y = msg.documents[0].x;
+
+                            var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+
+
+                                mapOption = {
+                                    center: new kakao.maps.LatLng(keyword_x, keyword_y), // 지도의 중심좌표
+                                    level: 7 // 지도의 확대 레벨
+                                };
+
+                            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                            // 마커를 표시할 위치와 title 객체 배열입니다 
+
+
+
+
+                            var positions = [
+                                {
+                                    title: msg.documents[0].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[0].y, msg.documents[0].x)
+                                },
+                                {
+                                    title: msg.documents[1].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[1].y, msg.documents[1].x)
+                                },
+                                {
+                                    title: msg.documents[2].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[2].y, msg.documents[2].x)
+                                },
+                                {
+                                    title: msg.documents[3].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[3].y, msg.documents[3].x)
+                                },
+                                {
+                                    title: msg.documents[4].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[4].y, msg.documents[4].x)
+                                },
+                                {
+                                    title: msg.documents[5].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[5].y, msg.documents[5].x)
+                                },
+                                {
+                                    title: msg.documents[6].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[6].y, msg.documents[6].x)
+                                },
+                                {
+                                    title: msg.documents[7].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[7].y, msg.documents[7].x)
+                                },
+                                {
+                                    title: msg.documents[8].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[8].y, msg.documents[8].x)
+                                },
+                                {
+                                    title: msg.documents[9].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[9].y, msg.documents[9].x)
+                                },
+                                {
+                                    title: msg.documents[10].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[10].y, msg.documents[10].x)
+                                },
+                                {
+                                    title: msg.documents[11].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[11].y, msg.documents[11].x)
+                                },
+                                {
+                                    title: msg.documents[12].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[12].y, msg.documents[12].x)
+                                },
+                                {
+                                    title: msg.documents[13].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[13].y, msg.documents[13].x)
+                                },
+                                {
+                                    title: msg.documents[14].place_name,
+                                    latlng: new kakao.maps.LatLng(msg.documents[14].y, msg.documents[14].x)
+                                }
+
+                            ];
+
+                            // 마커 이미지의 이미지 주소입니다
+
+
+                            for (var i = 0; i < positions.length; i++) {
+
+                                // 마커 이미지의 이미지 크기 입니다
+                                var imageSize = new kakao.maps.Size(24, 35);
+
+                                // 마커 이미지를 생성합니다    
+                                var markerImage = new kakao.maps.MarkerImage(imageSrc[i], imageSize);
+
+                                // 마커를 생성합니다
+                                var marker = new kakao.maps.Marker({
+                                    map: map, // 마커를 표시할 지도
+                                    position: positions[i].latlng, // 마커를 표시할 위치
+                                    title: positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                                    image: markerImage // 마커 이미지 
+                                });
+                            }
+
+                            $.ajax({
+                                method: "GET",
+                                url: "https://api.weatherbit.io/v2.0/current?lat=" + keyword_x + "&lon=" + keyword_y + "&key=db8e267cc81943dea25715a4794e3eb5&units=M"
+
+                            })
+                                .done(function (curent_weather) {
+                                    console.log(curent_weather);
+                                    $("#icon").append("<img src='https://www.weatherbit.io/static/img/icons/" + curent_weather.data[0].weather.icon + ".png'>");
+                                    $("#description").append(curent_weather.data[0].temp + "℃ &nbsp;");
+                                    $("#description").append(curent_weather.data[0].rh + "% &nbsp;");
+                                    $("#description").append(curent_weather.data[0].weather.description + "&nbsp;<br>");
+
+                                    curr_time = curent_weather.data[0].ob_time;
+
+                                    var tDate = new Date(curr_time);
+
+                                    // 시간 더하기
+                                    tDate.setHours(tDate.getHours() + 9);
+
+                                    function DateToString(pDate) {
+                                        var yyyy = pDate.getFullYear();
+                                        var mm = pDate.getMonth() < 9 ? "0" + (pDate.getMonth() + 1) : (pDate.getMonth() + 1); // getMonth() is zero-based
+                                        var dd = pDate.getDate() < 10 ? "0" + pDate.getDate() : pDate.getDate();
+                                        var hh = pDate.getHours() < 10 ? "0" + pDate.getHours() : pDate.getHours();
+                                        var min = pDate.getMinutes() < 10 ? "0" + pDate.getMinutes() : pDate.getMinutes();
+                                        return "".concat(yyyy).concat("-").concat(mm).concat("-").concat(dd).concat(" ").concat(hh).concat(":").concat(min);
+                                    };
+
+                                    tDate = DateToString(tDate);
+                                    $("#description").append("측정시각 : " + tDate + "<br>");
+                                    $("#description").append(curent_weather.data[0].city_name + "&nbsp;" + curent_weather.data[0].country_code);
+
+                                });
+
+                            $.ajax({
+                                method: "GET",
+                                url: "https://api.waqi.info/feed/geo:" + keyword_x + ";" + keyword_y + "/?token=a3217fdd5b58dd94f22869ee9d3c13c59c4c6ac2"
+
+                            })
+                                .done(function (pm) {
+                                    console.log(pm);
+
+                                    if (pm.data.iaqi.pm25.v <= 50) {
+                                        var level = "좋음";
+                                        var color = "#0080FF";
+                                        var icon = "<i class='far fa-smile'></i>"
+                                    } else if (pm.data.iaqi.pm25.v <= 100) {
+                                        var level = "보통";
+                                        var color = "#3ADF00";
+                                        var icon = "<i class='far fa-meh'></i>"
+                                    } else if (pm.data.iaqi.pm25.v <= 250) {
+                                        var level = "나쁨";
+                                        var color = "#FF8000";
+                                        var icon = "<i class='far fa-angry'></i>"
+                                    } else if (pm.data.iaqi.pm25.v <= 500) {
+                                        var level = "매우나쁨";
+                                        var color = "#FE2E2E";
+                                        var icon = "<i class='far fa-tired'></i>"
+                                    };
+
+                                    if (pm.data.iaqi.pm10.v <= 30) {
+                                        var pm10_level = "좋음";
+                                        var pm10_color = "#0080FF";
+                                        var pm10_icon = "<i class='far fa-smile'></i>"
+                                    } else if (pm.data.iaqi.pm10.v <= 80) {
+                                        var pm10_level = "보통";
+                                        var pm10_color = "#3ADF00";
+                                        var pm10_icon = "<i class='far fa-meh'></i>"
+                                    } else if (pm.data.iaqi.pm10.v <= 150) {
+                                        var pm10_level = "나쁨";
+                                        var pm10_color = "#FF8000";
+                                        var pm10_icon = "<i class='far fa-angry'></i>"
+                                    } else if (pm.data.iaqi.pm10.v <= 1000) {
+                                        var pm10_level = "매우나쁨";
+                                        var pm10_color = "#FE2E2E";
+                                        var pm10_icon = "<i class='far fa-tired'></i>"
+                                    };
+
+                                    $("#air_pm").append("통합대기(AQI) : <SPAN STYLE='background-color:" + color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm25.v + "(" + level + ")&nbsp;" + icon + "&nbsp;</i></font></span><br>");
+                                    $("#air_pm").append("미세먼지(PM10) : <SPAN STYLE='background-color:" + pm10_color + ";'><i><font color='white'>&nbsp;" + pm.data.iaqi.pm10.v + "(" + pm10_level + ")&nbsp;" + pm10_icon + "&nbsp;</i></font></span><br>");
+                                    $("#air_pm").append("측정시각 : " + pm.data.time.s + "<br>");
+                                    $("#air_pm").append("측정위치 : " + pm.data.city.name);
+
+                                });
+
+
+
+                        });
+
+
+
+
+
+                });
+                $('#keywordName').keypress(function (event) {
+                    if (event.which == 13) {
+                        $('#button-addon2').click();
+                        return false; // 검색창에서 엔터 쳤을 때
+                    }
+                });
+
+
+            });
+        </script>
+
+</body>
+
+</html>
