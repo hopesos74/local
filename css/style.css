@@ -14,15 +14,17 @@
   
       .flexbox-wrapper {
           display: flex;
-         
+          height: 100vh;
           overflow: auto;
           flex-wrap: wrap;
           padding-left: 10px;
           padding-right: 10px;  
+          align-items: stretch;
         }
   
         .regular {
           flex: 1 300px;
+          
         }
   
         .sticky {
@@ -30,9 +32,7 @@
           position: sticky;
           top: 0;
           flex: 3 400px;
-          height: 250px;
-          align-self: flex-start;
-          
+          height: 300px;
         }
   
         .current_weather{
@@ -42,6 +42,6 @@
 
         .result_style {
           padding: .5rem 1.25rem;
-          height: 25%;
       }
+      
   
